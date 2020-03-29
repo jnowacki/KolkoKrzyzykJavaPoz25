@@ -3,17 +3,25 @@ package pl.jnowacki.games;
 import java.util.Scanner;
 
 public class TicTacToe {
-    
+
+    private String player1;
+    private String player2;
+
+    public TicTacToe() {
+        player1 = "player1";
+        player2 = "player2";
+    }
+
+    public TicTacToe(String player1, String player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+    }
+
     public void startGame() {
+
         Scanner in = new Scanner(System.in);
 
         System.out.println("Witaj w grze o i x");
-
-        System.out.print("Podaj nazwe 1 gracza: ");
-        String player1 = in.nextLine();
-
-        System.out.print("\nPodaj nazwe 2 gracza: ");
-        String player2 = in.nextLine();
 
         System.out.printf("\n%s(o) gra z %s(x). Powodzenia!\n", player1, player2);
 
