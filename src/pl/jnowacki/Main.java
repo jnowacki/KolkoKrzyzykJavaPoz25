@@ -11,12 +11,12 @@ public class Main {
         System.out.println("Witaj w grze o i x");
 
         System.out.print("Podaj nazwe 1 gracza: ");
-        String player1 = "a"; //in.nextLine();
+        String player1 = in.nextLine();
 
         System.out.print("\nPodaj nazwe 2 gracza: ");
-        String player2 = "b"; //in.nextLine();
+        String player2 = in.nextLine();
 
-        System.out.printf("%s(o) gra z %s(x). Powodzenia!\n", player1, player2);
+        System.out.printf("\n%s(o) gra z %s(x). Powodzenia!\n", player1, player2);
 
         String winner = "";
         int boardSize = 3;
@@ -27,8 +27,11 @@ public class Main {
         do {
             System.out.println("Runda nr " + round);
 
-            System.out.println("Teraz ruch gracza " + (round % 2 == 1 ? player1 : player2));
-            System.out.println("Gdzie chcesz postawic " + (round % 2 == 1 ? "o" : "x"));
+            String activePlayer = round % 2 == 1 ? player1 : player2;
+            String activeToken = round % 2 == 1 ? "o" : "x";
+
+            System.out.println("Teraz ruch gracza " + activePlayer);
+            System.out.println("Gdzie chcesz postawic " + activeToken);
 
             System.out.println("Podaj wiersz do postawienia tokena: ");
             int row = Integer.parseInt(in.nextLine()) - 1;
@@ -36,22 +39,99 @@ public class Main {
             System.out.println("Podaj kolumne do postawienia tokena: ");
             int col = Integer.parseInt(in.nextLine()) - 1;
 
-            if(row < 0 || row > 2 || col < 0 || col > 2) {
-//                TODO: dodac sprawdzenie, czy pole jest puste
+            if(!isValidMove(board, row, col)) {
                 System.out.println("Niepoprawne dane");
                 continue;
             }
 
-            board[row][col] = round % 2 == 1 ? "o" : "x";
+            board[row][col] = activeToken;
 
-            drawBoard(board, boardSize);
+            drawBoard(board);
 
-//            TODO: warunek zwyciestwa i przypisanie zwyciezcy do zmiennej "winner"
+//            warunek zwyciestwa i przypisanie zwyciezcy do zmiennej "winner"
+            if(wasWinningMove(activeToken, board)) {
+                winner = activePlayer;
+            }
 
             round += 1;
         } while (shouldContinue(winner, round));
 
         displaySummary(winner);
+    }
+
+    private static boolean wasWinningMove(String token, String[][] board) {
+        return isVerticalWin(token, board) ||
+                isHorizontalWin(token, board) ||
+                isDiagonalWin(token, board);
+    }
+
+    private static boolean isValidMove(String[][] board, int row, int col) {
+        return row >= 0 && row <= board.length - 1 &&
+                col >= 0 && col <= board.length - 1 &&
+                board[row][col].isBlank();
+    }
+
+    private static boolean isVerticalWin(String token, String[][] board) {
+
+        for(int i = 0; i < board.length; i++) {
+
+            boolean win = true;
+
+            for(int j = 0; j < board.length; j++) {
+                if(!board[j][i].equals(token)){
+                    win = false;
+                    break;
+                }
+            }
+
+            if (win) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isHorizontalWin(String token, String[][] board) {
+        for(int i = 0; i < board.length; i++) {
+
+            boolean win = true;
+
+            for(int j = 0; j < board.length; j++) {
+                if(!board[i][j].equals(token)){
+                    win = false;
+                    break;
+                }
+            }
+
+            if (win) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isDiagonalWin(String token, String[][] board) {
+
+        boolean winD1 = true;
+        boolean winD2 = true;
+
+        for(int i = 0; i < board.length; i++) {
+            if (!board[i][i].equals(token)){
+                winD1 = false;
+            }
+
+            if (!board[i][board.length - (i + 1)].equals(token)){
+                winD2 = false;
+            }
+
+            if(!(winD1 || winD2)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static boolean shouldContinue(String winner, int round) {
@@ -66,21 +146,21 @@ public class Main {
         }
     }
 
-    private static void drawBoard(String[][] board, int length) {
-        for (int i = 0; i < length; i++){
-            for (int j = 0; j < length; j++){
+    private static void drawBoard(String[][] board) {
+        for (int i = 0; i < board.length; i++){
+            for (int j = 0; j < board.length; j++){
 
 //                    wyswietlanie pola
                 System.out.print(board[i][j]);
 
 //                    rodziela pola w wierszu
-                if(j < length - 1) {
+                if(j < board.length - 1) {
                     System.out.print("|");
                 }
             }
 
 //                linia konca wiersza
-            if(i < length - 1) {
+            if(i < board.length - 1) {
                 System.out.println("\n-----");
             }
         }
